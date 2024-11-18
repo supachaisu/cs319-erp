@@ -8,4 +8,12 @@ The back-end is built with Express and Prisma.
 2. Setup Prisma: `npx prisma generate`
 3. Create/sync database: `npx prisma migrate deploy`
 4. Seed database: `npx prisma db seed`
-5. Start server: `npm run dev`
+
+## Production
+
+1. Build: `npm run build`
+2. Start server: `npm run start`
+
+## Development
+
+1. Start server: `npm run dev`
