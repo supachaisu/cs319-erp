@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 const app = express();
 
 app.use(express.json());
-app.use('/api', express.Router());
+app.use("/api", express.Router());
 
 const VALID_TRANSACTION_TYPES = ["INCOME", "EXPENSE"] as const;
 const VALID_TRANSACTION_STATUSES = [
