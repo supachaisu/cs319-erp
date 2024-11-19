@@ -2,7 +2,7 @@ import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { Transaction } from "./models";
 import { AsyncPipe, DatePipe, NgClass, DecimalPipe } from "@angular/common";
-import { Observable, Subscription, interval, switchMap, startWith } from "rxjs";
+import { Observable, Subscription, interval, switchMap, startWith, map } from "rxjs";
 import { TransactionsRepositoryService } from "./services/transactions-repository.service";
 
 @Component({
@@ -24,6 +24,9 @@ export class AppComponent {
 
   // Subscription to handle cleanup
   private subscription!: Subscription;
+
+  sortColumn = 'date';
+  sortDirection: 'asc' | 'desc' = 'desc';
 
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
@@ -54,5 +57,26 @@ export class AppComponent {
   // Cleanup subscription when component is destroyed
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
+  }
+
+  sort(column: keyof Transaction) {
+    if (this.sortColumn === column) {
+      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+    } else {
+      this.sortColumn = column;
+      this.sortDirection = 'desc';
+    }
+
+    this.transactions$ = this.transactions$.pipe(
+      map(transactions => [...transactions].sort((a, b) => {
+        const direction = this.sortDirection === 'asc' ? 1 : -1;
+        
+        if (column === 'amount') {
+          return (a[column] - b[column]) * direction;
+        }
+        
+        return String(a[column]).localeCompare(String(b[column])) * direction;
+      }))
+    );
   }
 }

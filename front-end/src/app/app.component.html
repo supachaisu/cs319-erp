@@ -32,31 +32,59 @@
                       scope="col"
                       class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                     >
-                      Date
+                      <span class="cursor-pointer" (click)="sort('date')">
+                        Date
+                        @if (sortColumn === 'date') {
+                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        }
+                      </span>
                     </th>
                     <th
                       scope="col"
-                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter"
+                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                     >
-                      Description
+                      <span class="cursor-pointer" (click)="sort('amount')">
+                        Amount
+                        @if (sortColumn === 'amount') {
+                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        }
+                      </span>
                     </th>
                     <th
                       scope="col"
-                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter"
+                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                     >
-                      Amount
+                      <span
+                        class="cursor-pointer"
+                        (click)="sort('description')"
+                      >
+                        Description
+                        @if (sortColumn === 'description') {
+                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        }
+                      </span>
                     </th>
                     <th
                       scope="col"
-                      class="sticky top-0 z-10 hidden border-b border-gray-300 bg-white/75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter lg:table-cell"
+                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                     >
-                      Category
+                      <span class="cursor-pointer" (click)="sort('category')">
+                        Category
+                        @if (sortColumn === 'category') {
+                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        }
+                      </span>
                     </th>
                     <th
                       scope="col"
-                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 px-3 py-3.5 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:table-cell"
+                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
                     >
-                      Status
+                      <span class="cursor-pointer" (click)="sort('status')">
+                        Status
+                        @if (sortColumn === 'status') {
+                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        }
+                      </span>
                     </th>
                   </tr>
                 </thead>
@@ -69,12 +97,7 @@
                         {{ transaction.date | date }}
                       </td>
                       <td
-                        class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500"
-                      >
-                        {{ transaction.description }}
-                      </td>
-                      <td
-                        class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm"
+                        class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                         [ngClass]="
                           transaction.type === 'EXPENSE'
                             ? 'text-red-600'
@@ -92,12 +115,17 @@
                         </span>
                       </td>
                       <td
-                        class="hidden whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 lg:table-cell"
+                        class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
+                      >
+                        {{ transaction.description }}
+                      </td>
+                      <td
+                        class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                       >
                         {{ transaction.category }}
                       </td>
                       <td
-                        class="whitespace-nowrap border-b border-gray-200 px-3 py-4 text-sm text-gray-500 lg:table-cell"
+                        class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                       >
                         {{ transaction.status }}
                       </td>
