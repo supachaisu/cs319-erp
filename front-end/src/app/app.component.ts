@@ -1,14 +1,14 @@
 import { Component } from "@angular/core";
 import { RouterOutlet } from "@angular/router";
 import { Transaction } from "./models";
-import { AsyncPipe, CurrencyPipe, DatePipe, NgClass } from "@angular/common";
+import { AsyncPipe, DatePipe, NgClass, DecimalPipe } from "@angular/common";
 import { Observable, Subscription, interval, switchMap, startWith } from "rxjs";
 import { TransactionsRepositoryService } from "./services/transactions-repository.service";
 
 @Component({
   selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, CurrencyPipe, DatePipe, NgClass],
+  imports: [RouterOutlet, AsyncPipe, DatePipe, NgClass, DecimalPipe],
   templateUrl: "./app.component.html",
   styles: [],
 })
