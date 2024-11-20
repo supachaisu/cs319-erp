@@ -2,7 +2,7 @@ import { Component, EventEmitter, inject, Output } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { CommonModule } from '@angular/common'
 import { CreateTransactionDto, Transaction, TransactionType } from './models'
-import { TransactionsRepositoryService } from './services/transactions-repository.service'
+import { TransactionsRepositoryService } from './services'
 
 @Component({
   selector: 'app-add-transaction-dialog',

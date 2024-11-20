@@ -10,7 +10,7 @@ import {
   tap,
   debounceTime,
 } from 'rxjs'
-import { TransactionsRepositoryService } from './services/transactions-repository.service'
+import { TransactionsRepositoryService } from './services'
 import { AddTransactionDialogComponent } from './add-transaction-dialog.component'
 import { FormControl } from '@angular/forms'
 import { ReactiveFormsModule } from '@angular/forms'
