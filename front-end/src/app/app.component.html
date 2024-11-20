@@ -20,11 +20,11 @@
         </div>
       </div>
 
-      @if (transactions(); as transactions) {
+      @if (paginatedTransactions(); as transactions) {
         <div class="mt-8 flow-root">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div
-              class="inline-block max-h-[550px] min-w-full overflow-y-auto pb-36 align-middle sm:pb-0"
+              class="inline-block h-[340px] sm:h-[448px] min-w-full max-w-full overflow-y-auto overflow-x-auto align-middle"
             >
               <table class="min-w-full border-separate border-spacing-0">
                 <thead>
@@ -134,6 +134,92 @@
                   }
                 </tbody>
               </table>
+            </div>
+            <div
+              class="flex items-center justify-between bg-white px-4 py-3 sm:px-6"
+            >
+              <div class="flex flex-1 justify-between sm:hidden">
+                <button
+                  [disabled]="currentPage() === 1"
+                  (click)="setPage(currentPage() - 1)"
+                  class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <button
+                  [disabled]="currentPage() === totalPages()"
+                  (click)="setPage(currentPage() + 1)"
+                  class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+              <div
+                class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between"
+              >
+                <div>
+                  <p class="text-sm text-gray-700">
+                    Showing
+                    <span class="font-medium">{{ startIndex() + 1 }}</span> to
+                    <span class="font-medium">{{ endIndex() }}</span> of
+                    <span class="font-medium">{{ totalItems() }}</span> results
+                  </p>
+                </div>
+                <div>
+                  <nav
+                    class="isolate inline-flex -space-x-px rounded-md shadow-sm"
+                  >
+                    <button
+                      [disabled]="currentPage() === 1"
+                      (click)="setPage(currentPage() - 1)"
+                      class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      <span class="sr-only">Previous</span>
+                      <svg
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    @for (page of pageNumbers(); track page) {
+                      <button
+                        (click)="setPage(page)"
+                        [class]="
+                          page === currentPage()
+                            ? 'relative z-10 inline-flex items-center bg-zinc-900 px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900'
+                            : 'relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0'
+                        "
+                      >
+                        {{ page }}
+                      </button>
+                    }
+                    <button
+                      [disabled]="currentPage() === totalPages()"
+                      (click)="setPage(currentPage() + 1)"
+                      class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:opacity-50"
+                    >
+                      <span class="sr-only">Next</span>
+                      <svg
+                        class="h-5 w-5"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </nav>
+                </div>
+              </div>
             </div>
           </div>
         </div>

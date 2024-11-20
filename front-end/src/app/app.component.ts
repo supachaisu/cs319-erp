@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core'
+import { Component, signal, computed } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { Transaction } from './models'
 import { AsyncPipe, DatePipe, NgClass, DecimalPipe } from '@angular/common'
@@ -28,6 +28,22 @@ export class AppComponent {
 
   isDialogOpen = false
 
+  // Pagination
+  itemsPerPage = signal(10)
+  currentPage = signal(1)
+  totalItems = computed(() => this.transactions().length)
+  totalPages = computed(() =>
+    Math.ceil(this.totalItems() / this.itemsPerPage()),
+  )
+  startIndex = computed(() => (this.currentPage() - 1) * this.itemsPerPage())
+  endIndex = computed(() =>
+    Math.min(this.startIndex() + this.itemsPerPage(), this.totalItems()),
+  )
+  pageNumbers = computed(() => {
+    const total = this.totalPages()
+    return Array.from({ length: total }, (_, i) => i + 1)
+  })
+
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
   ngOnInit(): void {
@@ -42,6 +58,11 @@ export class AppComponent {
         this.sortTransactions(this.sortColumn(), this.sortDirection()),
       )
     })
+  }
+
+  // Cleanup subscription when component is destroyed
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe()
   }
 
   private async loadTransactions(): Promise<void> {
@@ -90,8 +111,17 @@ export class AppComponent {
     )
   }
 
-   // Cleanup subscription when component is destroyed
-   ngOnDestroy(): void {
-    this.subscription?.unsubscribe()
+  setPage(page: number) {
+    this.currentPage.set(page)
+    const tableContainer = document.querySelector('.overflow-y-auto')
+    if (tableContainer) {
+      tableContainer.scrollTop = 0
+    }
   }
+
+  paginatedTransactions = computed(() => {
+    const start = this.startIndex()
+    const end = this.endIndex()
+    return this.transactions().slice(start, end)
+  })
 }
