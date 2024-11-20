@@ -20,7 +20,7 @@
         </div>
       </div>
 
-      @if (paginatedTransactions(); as transactions) {
+      @if (transactions(); as transactions) {
         <div class="mt-8 flow-root">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div
@@ -230,7 +230,7 @@
 
 @if (isDialogOpen) {
   <app-add-transaction-dialog
-    (createTransactionEvent)="mergeTransactions($event)"
+    (createTransactionEvent)="loadTransactions()"
     (closeDialog)="isDialogOpen = false"
   />
 }

@@ -31,7 +31,7 @@ export class AppComponent {
   // Pagination
   itemsPerPage = signal(10)
   currentPage = signal(1)
-  totalItems = computed(() => this.transactions().length)
+  totalItems = signal<number>(0)
   totalPages = computed(() =>
     Math.ceil(this.totalItems() / this.itemsPerPage()),
   )
@@ -47,38 +47,32 @@ export class AppComponent {
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
   ngOnInit(): void {
-    // Initial load and sort
-    this.loadTransactions().then(() =>
-      this.sortTransactions(this.sortColumn(), this.sortDirection()),
-    )
-
-    // Single polling subscription
-    this.subscription = interval(1000).subscribe(() => {
-      this.loadTransactions().then(() =>
-        this.sortTransactions(this.sortColumn(), this.sortDirection()),
-      )
+    this.loadTransactions().then(() => {
+      // Single polling subscription
+      this.subscription = interval(1000).subscribe(() => {
+        this.loadTransactions()
+      })
     })
   }
 
-  // Cleanup subscription when component is destroyed
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
   }
 
-  private async loadTransactions(): Promise<void> {
-    const transactions = await firstValueFrom(
-      this.transactionsRepository.getTransactions(),
-    )
-    this.transactions.set(transactions ?? [])
-  }
+  async loadTransactions(): Promise<void> {
+    const skip = this.startIndex()
+    const take = this.itemsPerPage()
 
-  mergeTransactions(transactions: Transaction[]): void {
-    this.transactions.update((current) => {
-      const uniqueTransactions = [...new Set([...current, ...transactions])]
-      return uniqueTransactions
-    })
-    console.log('Sort Direction', this.sortDirection())
-    this.sort(this.sortColumn(), this.sortDirection())
+    const response = await firstValueFrom(
+      this.transactionsRepository.getTransactions(
+        this.sortColumn(),
+        this.sortDirection(),
+        skip,
+        take,
+      ),
+    )
+    this.transactions.set(response.transactions ?? [])
+    this.totalItems.set(response.total)
   }
 
   sort(column: keyof Transaction, forceSortDirection?: 'asc' | 'desc') {
@@ -91,37 +85,15 @@ export class AppComponent {
       this.sortDirection.set(forceSortDirection ?? 'desc')
     }
 
-    this.sortTransactions(column, this.sortDirection())
-  }
-
-  private sortTransactions(
-    column: keyof Transaction,
-    direction: 'asc' | 'desc',
-  ): void {
-    const sortMultiplier = direction === 'asc' ? 1 : -1
-    this.transactions.update((transactions) =>
-      [...transactions].sort((a, b) => {
-        if (column === 'amount') {
-          return (a[column] - b[column]) * sortMultiplier
-        }
-        return (
-          String(a[column]).localeCompare(String(b[column])) * sortMultiplier
-        )
-      }),
-    )
+    this.loadTransactions()
   }
 
   setPage(page: number) {
     this.currentPage.set(page)
+    this.loadTransactions()
     const tableContainer = document.querySelector('.overflow-y-auto')
     if (tableContainer) {
       tableContainer.scrollTop = 0
     }
   }
-
-  paginatedTransactions = computed(() => {
-    const start = this.startIndex()
-    const end = this.endIndex()
-    return this.transactions().slice(start, end)
-  })
 }

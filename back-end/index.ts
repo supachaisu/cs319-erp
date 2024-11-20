@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, Transaction } from "@prisma/client";
 import express from "express";
 
 const prisma = new PrismaClient();
@@ -78,7 +78,14 @@ app.post(`/api/transaction`, async (req, res) => {
 });
 
 app.get("/api/transactions", async (req, res) => {
-  const { type, category, skip, take } = req.query;
+  const {
+    type,
+    category,
+    skip,
+    take,
+    orderBy = "date",
+    orderDirection = "desc",
+  } = req.query;
 
   const where: Prisma.TransactionWhereInput = {
     ...(type && { type: type as string }),
@@ -86,15 +93,19 @@ app.get("/api/transactions", async (req, res) => {
   };
 
   try {
-    const transactions = await prisma.transaction.findMany({
-      where,
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
-      orderBy: {
-        date: "desc",
-      },
-    });
-    res.json(transactions);
+    const [transactions, total] = await prisma.$transaction([
+      prisma.transaction.findMany({
+        where,
+        take: Number(take) || undefined,
+        skip: Number(skip) || undefined,
+        orderBy: {
+          [orderBy as keyof Transaction]: orderDirection,
+        },
+      }),
+      prisma.transaction.count({ where }),
+    ]);
+
+    res.json({ transactions, total });
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch transactions" });
   }
