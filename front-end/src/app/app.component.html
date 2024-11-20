@@ -9,6 +9,27 @@
             amount, category and status.
           </p>
         </div>
+        <div class="mt-4 sm:ml-4 sm:mt-0">
+          <select
+            [formControl]="typeFilter"
+            class="rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-zinc-500 focus:outline-none focus:ring-zinc-500"
+          >
+            <option value="">All Types</option>
+            <option value="INCOME">Income</option>
+            <option value="EXPENSE">Expense</option>
+          </select>
+        </div>
+        <div class="mt-4 sm:ml-4 sm:mt-0">
+          <select
+            [formControl]="categoryFilter"
+            class="rounded-md border-gray-300 py-2 pl-3 pr-10 text-sm focus:border-zinc-500 focus:outline-none focus:ring-zinc-500"
+          >
+            <option value="">All Categories</option>
+            @for (category of categories(); track category) {
+              <option [value]="category">{{ category }}</option>
+            }
+          </select>
+        </div>
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"

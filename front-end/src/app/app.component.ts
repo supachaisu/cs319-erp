@@ -2,9 +2,18 @@ import { Component, signal, computed } from '@angular/core'
 import { RouterOutlet } from '@angular/router'
 import { Transaction } from './models'
 import { AsyncPipe, DatePipe, NgClass, DecimalPipe } from '@angular/common'
-import { Subscription, interval, firstValueFrom } from 'rxjs'
+import {
+  Subscription,
+  interval,
+  firstValueFrom,
+  merge,
+  tap,
+  debounceTime,
+} from 'rxjs'
 import { TransactionsRepositoryService } from './services/transactions-repository.service'
 import { AddTransactionDialogComponent } from './add-transaction-dialog.component'
+import { FormControl } from '@angular/forms'
+import { ReactiveFormsModule } from '@angular/forms'
 
 @Component({
   selector: 'app-root',
@@ -16,6 +25,7 @@ import { AddTransactionDialogComponent } from './add-transaction-dialog.componen
     NgClass,
     DecimalPipe,
     AddTransactionDialogComponent,
+    ReactiveFormsModule,
   ],
   templateUrl: './app.component.html',
 })
@@ -44,31 +54,57 @@ export class AppComponent {
     return Array.from({ length: total }, (_, i) => i + 1)
   })
 
+  typeFilter = new FormControl('')
+  categoryFilter = new FormControl('')
+  categories = signal<string[]>([])
+
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
   ngOnInit(): void {
+    // Set up filter subscriptions
+    merge(this.typeFilter.valueChanges, this.categoryFilter.valueChanges)
+      .pipe(
+        tap(() => this.currentPage.set(1)),
+        debounceTime(300),
+      )
+      .subscribe(() => this.loadTransactions())
+
     this.loadTransactions().then(() => {
-      // Single polling subscription
       this.subscription = interval(1000).subscribe(() => {
         this.loadTransactions()
       })
     })
+
+    this.loadCategories()
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe()
   }
 
+  async loadCategories() {
+    const categories = await this.transactionsRepository.getCategories()
+    this.categories.set(categories)
+  }
+
   async loadTransactions(): Promise<void> {
-    const skip = this.startIndex()
-    const take = this.itemsPerPage()
+    const params = {
+      skip: (this.currentPage() - 1) * this.itemsPerPage(),
+      take: this.itemsPerPage(),
+      orderBy: this.sortColumn(),
+      orderDirection: this.sortDirection(),
+      type: this.typeFilter.value || undefined,
+      category: this.categoryFilter.value || undefined,
+    }
 
     const response = await firstValueFrom(
       this.transactionsRepository.getTransactions(
-        this.sortColumn(),
-        this.sortDirection(),
-        skip,
-        take,
+        params.orderBy,
+        params.orderDirection,
+        params.skip,
+        params.take,
+        params.type,
+        params.category,
       ),
     )
     this.transactions.set(response.transactions ?? [])

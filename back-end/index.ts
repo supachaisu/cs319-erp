@@ -168,6 +168,21 @@ app.delete("/api/transaction/:id", async (req, res) => {
   }
 });
 
+app.get("/api/categories", async (req, res) => {
+  try {
+    const categories = await prisma.transaction.findMany({
+      select: {
+        category: true,
+      },
+      distinct: ['category'],
+    });
+    
+    res.json(categories.map(c => c.category));
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch categories" });
+  }
+});
+
 const server = app.listen(3000, () =>
   console.log(`
 🚀 Server ready at: http://localhost:3000

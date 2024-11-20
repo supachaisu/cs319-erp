@@ -19,12 +19,16 @@ export class TransactionsRepositoryService {
     orderDirection: 'desc' | 'asc' = 'desc',
     skip?: number,
     take?: number,
+    type?: string,
+    category?: string,
   ): Observable<TransactionsResponse> {
     const params = new HttpParams()
       .set('skip', skip?.toString() ?? '')
       .set('take', take?.toString() ?? '')
       .set('orderBy', orderBy)
       .set('orderDirection', orderDirection)
+      .set('type', type ?? '')
+      .set('category', category ?? '')
 
     return this.http.get<TransactionsResponse>('/api/transactions', { params })
   }
@@ -33,5 +37,10 @@ export class TransactionsRepositoryService {
     transaction: CreateTransactionDto,
   ): Observable<Transaction> {
     return this.http.post<Transaction>('/api/transaction', transaction)
+  }
+
+  async getCategories(): Promise<string[]> {
+    const response = await fetch('/api/categories')
+    return response.json()
   }
 }
