@@ -20,17 +20,11 @@ import { AddTransactionDialogComponent } from './add-transaction-dialog.componen
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  // Holds the app title
-  title = 'front-end'
-
-  // Local array to store current transactions
   transactions = signal<Transaction[]>([])
-
-  // Subscription to handle cleanup
-  private subscription!: Subscription
-
   sortColumn = signal<keyof Transaction>('date')
   sortDirection = signal<'asc' | 'desc'>('desc')
+
+  private subscription!: Subscription
 
   isDialogOpen = false
 
@@ -66,11 +60,6 @@ export class AppComponent {
     this.sort(this.sortColumn(), this.sortDirection())
   }
 
-  // Cleanup subscription when component is destroyed
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe()
-  }
-
   sort(column: keyof Transaction, forceSortDirection?: 'asc' | 'desc') {
     if (this.sortColumn() === column) {
       this.sortDirection.set(
@@ -99,5 +88,10 @@ export class AppComponent {
         )
       }),
     )
+  }
+
+   // Cleanup subscription when component is destroyed
+   ngOnDestroy(): void {
+    this.subscription?.unsubscribe()
   }
 }
