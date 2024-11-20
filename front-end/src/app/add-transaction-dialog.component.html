@@ -1,7 +1,11 @@
 <div
   class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
+  (click)="onCancel()"
 >
-  <div class="w-full max-w-md rounded-lg bg-white p-6">
+  <div 
+    class="w-full max-w-md rounded-lg bg-white p-6"
+    (click)="$event.stopPropagation()"
+  >
     <h2 class="mb-4 text-lg font-bold">Add Transaction</h2>
 
     <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-4">
