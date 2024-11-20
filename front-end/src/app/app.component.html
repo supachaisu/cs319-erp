@@ -3,7 +3,7 @@
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-          <h1 class="text-lg font-semibold text-gray-900">Transactions</h1>
+          <h1 class="text-lg font-bold text-gray-900">Transactions</h1>
           <p class="mt-2 text-sm text-gray-700">
             A list of all financial transactions including date, description,
             amount, category and status.
@@ -12,14 +12,15 @@
         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"
+            (click)="isDialogOpen = true"
             class="block rounded-md bg-zinc-900 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-zinc-900"
           >
-            Add transaction
+            Add Transaction
           </button>
         </div>
       </div>
 
-      @if (transactions$ | async; as transactions) {
+      @if (transactions(); as transactions) {
         <div class="mt-8 flow-root">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div
@@ -34,8 +35,8 @@
                     >
                       <span class="cursor-pointer" (click)="sort('date')">
                         Date
-                        @if (sortColumn === 'date') {
-                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        @if (sortColumn() === 'date') {
+                          {{ sortDirection() === 'asc' ? '↑' : '↓' }}
                         }
                       </span>
                     </th>
@@ -45,8 +46,8 @@
                     >
                       <span class="cursor-pointer" (click)="sort('amount')">
                         Amount
-                        @if (sortColumn === 'amount') {
-                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        @if (sortColumn() === 'amount') {
+                          {{ sortDirection() === 'asc' ? '↑' : '↓' }}
                         }
                       </span>
                     </th>
@@ -59,8 +60,8 @@
                         (click)="sort('description')"
                       >
                         Description
-                        @if (sortColumn === 'description') {
-                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        @if (sortColumn() === 'description') {
+                          {{ sortDirection() === 'asc' ? '↑' : '↓' }}
                         }
                       </span>
                     </th>
@@ -70,8 +71,8 @@
                     >
                       <span class="cursor-pointer" (click)="sort('category')">
                         Category
-                        @if (sortColumn === 'category') {
-                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        @if (sortColumn() === 'category') {
+                          {{ sortDirection() === 'asc' ? '↑' : '↓' }}
                         }
                       </span>
                     </th>
@@ -81,8 +82,8 @@
                     >
                       <span class="cursor-pointer" (click)="sort('status')">
                         Status
-                        @if (sortColumn === 'status') {
-                          {{ sortDirection === 'asc' ? '↑' : '↓' }}
+                        @if (sortColumn() === 'status') {
+                          {{ sortDirection() === 'asc' ? '↑' : '↓' }}
                         }
                       </span>
                     </th>
@@ -140,5 +141,12 @@
     </div>
   </div>
 </div>
+
+@if (isDialogOpen) {
+  <app-add-transaction-dialog
+    (createTransactionEvent)="mergeTransactions($event)"
+    (closeDialog)="isDialogOpen = false"
+  />
+}
 
 <router-outlet />

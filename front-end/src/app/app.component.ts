@@ -1,82 +1,103 @@
-import { Component } from "@angular/core";
-import { RouterOutlet } from "@angular/router";
-import { Transaction } from "./models";
-import { AsyncPipe, DatePipe, NgClass, DecimalPipe } from "@angular/common";
-import { Observable, Subscription, interval, switchMap, startWith, map } from "rxjs";
-import { TransactionsRepositoryService } from "./services/transactions-repository.service";
+import { Component, signal } from '@angular/core'
+import { RouterOutlet } from '@angular/router'
+import { Transaction } from './models'
+import { AsyncPipe, DatePipe, NgClass, DecimalPipe } from '@angular/common'
+import { Subscription, interval, firstValueFrom } from 'rxjs'
+import { TransactionsRepositoryService } from './services/transactions-repository.service'
+import { AddTransactionDialogComponent } from './add-transaction-dialog.component'
 
 @Component({
-  selector: "app-root",
+  selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, AsyncPipe, DatePipe, NgClass, DecimalPipe],
-  templateUrl: "./app.component.html",
-  styles: [],
+  imports: [
+    RouterOutlet,
+    AsyncPipe,
+    DatePipe,
+    NgClass,
+    DecimalPipe,
+    AddTransactionDialogComponent,
+  ],
+  templateUrl: './app.component.html',
 })
 export class AppComponent {
   // Holds the app title
-  title = "front-end";
-
-  // Observable stream of transactions
-  transactions$!: Observable<Transaction[]>;
+  title = 'front-end'
 
   // Local array to store current transactions
-  transactions: Transaction[] = [];
+  transactions = signal<Transaction[]>([])
 
   // Subscription to handle cleanup
-  private subscription!: Subscription;
+  private subscription!: Subscription
 
-  sortColumn = 'date';
-  sortDirection: 'asc' | 'desc' = 'desc';
+  sortColumn = signal<keyof Transaction>('date')
+  sortDirection = signal<'asc' | 'desc'>('desc')
+
+  isDialogOpen = false
 
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
   ngOnInit(): void {
-    // Set up polling for transactions every 5 seconds
-    this.transactions$ = this.transactionsRepository.getTransactions().pipe(
-      switchMap((initial) =>
-        interval(5000).pipe(
-          // Get fresh transactions every 5 seconds
-          switchMap(() => this.transactionsRepository.getTransactions()),
-          // Use initial response immediately before first interval
-          startWith(initial)
-        )
-      )
-    );
+    // Initial load and sort
+    this.loadTransactions().then(() =>
+      this.sortTransactions(this.sortColumn(), this.sortDirection()),
+    )
 
-    // Subscribe to transaction updates and store them locally
-    this.subscription = this.transactions$.subscribe((transactions) => {
-      this.updateTransactions(transactions);
-    });
+    // Single polling subscription
+    this.subscription = interval(1000).subscribe(() => {
+      this.loadTransactions().then(() =>
+        this.sortTransactions(this.sortColumn(), this.sortDirection()),
+      )
+    })
   }
 
-  // Update local transactions array with new data
-  private updateTransactions(transactions: Transaction[]): void {
-    this.transactions = [...transactions]; // Create new array reference
+  private async loadTransactions(): Promise<void> {
+    const transactions = await firstValueFrom(
+      this.transactionsRepository.getTransactions(),
+    )
+    this.transactions.set(transactions ?? [])
+  }
+
+  mergeTransactions(transactions: Transaction[]): void {
+    this.transactions.update((current) => {
+      const uniqueTransactions = [...new Set([...current, ...transactions])]
+      return uniqueTransactions
+    })
+    console.log('Sort Direction', this.sortDirection())
+    this.sort(this.sortColumn(), this.sortDirection())
   }
 
   // Cleanup subscription when component is destroyed
   ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
+    this.subscription?.unsubscribe()
   }
 
-  sort(column: keyof Transaction) {
-    if (this.sortColumn === column) {
-      this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+  sort(column: keyof Transaction, forceSortDirection?: 'asc' | 'desc') {
+    if (this.sortColumn() === column) {
+      this.sortDirection.set(
+        forceSortDirection ?? (this.sortDirection() === 'asc' ? 'desc' : 'asc'),
+      )
     } else {
-      this.sortColumn = column;
-      this.sortDirection = 'desc';
+      this.sortColumn.set(column)
+      this.sortDirection.set(forceSortDirection ?? 'desc')
     }
 
-    this.transactions$ = this.transactions$.pipe(
-      map(transactions => [...transactions].sort((a, b) => {
-        const direction = this.sortDirection === 'asc' ? 1 : -1;
-        
+    this.sortTransactions(column, this.sortDirection())
+  }
+
+  private sortTransactions(
+    column: keyof Transaction,
+    direction: 'asc' | 'desc',
+  ): void {
+    const sortMultiplier = direction === 'asc' ? 1 : -1
+    this.transactions.update((transactions) =>
+      [...transactions].sort((a, b) => {
         if (column === 'amount') {
-          return (a[column] - b[column]) * direction;
+          return (a[column] - b[column]) * sortMultiplier
         }
-        
-        return String(a[column]).localeCompare(String(b[column])) * direction;
-      }))
-    );
+        return (
+          String(a[column]).localeCompare(String(b[column])) * sortMultiplier
+        )
+      }),
+    )
   }
 }
