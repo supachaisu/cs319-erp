@@ -1,9 +1,25 @@
 <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
   <div class="mx-auto max-w-7xl">
+    @if (transactions()) {
+      <div id="chart">
+        <apx-chart
+          [series]="chartOptions.series!"
+          [chart]="chartOptions.chart!"
+          [xaxis]="chartOptions.xaxis!"
+          [yaxis]="chartOptions.yaxis!"
+          [grid]="chartOptions.grid!"
+          [stroke]="chartOptions.stroke!"
+          [title]="chartOptions.title!"
+          [markers]="chartOptions.markers!"
+          [tooltip]="chartOptions.tooltip!"
+        ></apx-chart>
+      </div>
+    }
+
     <div class="px-4 sm:px-6 lg:px-8">
       <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-          <h1 class="text-lg sm:text-xl font-bold text-gray-900">
+          <h1 class="text-lg font-bold text-gray-900 sm:text-xl">
             <a href="/">Transactions</a>
           </h1>
           <p class="mt-2 text-sm text-gray-700">
@@ -47,7 +63,7 @@
         <div class="mt-8 flow-root">
           <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div
-              class="inline-block h-[340px] sm:h-[448px] min-w-full max-w-full overflow-y-auto overflow-x-auto align-middle"
+              class="inline-block h-[340px] min-w-full max-w-full overflow-x-auto overflow-y-auto align-middle sm:h-[448px]"
             >
               <table class="min-w-full border-separate border-spacing-0">
                 <thead>
