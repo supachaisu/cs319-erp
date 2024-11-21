@@ -1,6 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http'
 import { Injectable } from '@angular/core'
-import { CreateTransactionDto, Transaction } from '../models'
+import {
+  CreateTransactionDto,
+  Transaction,
+  UpdateTransactionDto,
+} from '../models'
 import { Observable } from 'rxjs'
 
 interface TransactionsResponse {
@@ -46,5 +50,14 @@ export class TransactionsRepositoryService {
 
   deleteTransaction(id: string): Observable<void> {
     return this.http.delete<void>(`/api/transaction/${id}`)
+  }
+
+  updateTransaction(
+    transaction: UpdateTransactionDto,
+  ): Observable<Transaction> {
+    return this.http.put<Transaction>(
+      `/api/transaction/${transaction.id}`,
+      transaction,
+    )
   }
 }

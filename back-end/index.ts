@@ -131,7 +131,7 @@ app.get("/api/transaction/:id", async (req, res) => {
 
 app.put("/api/transaction/:id", async (req, res) => {
   const { id } = req.params;
-  const { description, amount, type, category, status } = req.body;
+  const { date, description, amount, type, category, status } = req.body;
 
   if (type && !validateTransactionType(type, res)) return;
 
@@ -146,6 +146,7 @@ app.put("/api/transaction/:id", async (req, res) => {
         type,
         category,
         status,
+        date,
       },
     });
     res.json(transaction);

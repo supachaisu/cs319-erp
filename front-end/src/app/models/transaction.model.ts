@@ -24,5 +24,7 @@ export interface CreateTransactionDto {
 
 // UpdateTransactionDto makes all fields optional + allows status update
 export interface UpdateTransactionDto extends Partial<CreateTransactionDto> {
+  id: number;
   status?: TransactionStatus;
+  date?: string;
 }

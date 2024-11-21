@@ -12,6 +12,7 @@ import {
 } from 'rxjs'
 import { TransactionsRepositoryService } from './services'
 import { AddTransactionDialogComponent } from './add-transaction-dialog.component'
+import { EditTransactionDialogComponent } from './edit-transaction-dialog.component'
 import { FormControl } from '@angular/forms'
 import { ReactiveFormsModule } from '@angular/forms'
 import { NgApexchartsModule } from 'ng-apexcharts'
@@ -55,6 +56,7 @@ export type ChartOptions = {
     ReactiveFormsModule,
     NgApexchartsModule,
     DeleteTransactionDialogComponent,
+    EditTransactionDialogComponent,
   ],
   templateUrl: './app.component.html',
 })
@@ -137,6 +139,7 @@ export class AppComponent {
 
   selectedTransaction: Transaction | null = null
   isDeleteDialogOpen = false
+  isEditDialogOpen = false
 
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
@@ -288,5 +291,10 @@ export class AppComponent {
         this.selectedTransaction = null
         this.loadTransactions()
       })
+  }
+
+  openEditDialog(transaction: Transaction) {
+    this.selectedTransaction = transaction
+    this.isEditDialogOpen = true
   }
 }
