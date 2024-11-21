@@ -126,6 +126,11 @@
                         }
                       </span>
                     </th>
+                    <th
+                      scope="col"
+                      class="sticky top-0 z-10 border-b border-gray-300 bg-white/75 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 backdrop-blur backdrop-filter sm:pl-6 lg:pl-8"
+                    >
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -168,6 +173,16 @@
                         class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 lg:pl-8"
                       >
                         {{ transaction.status }}
+                      </td>
+                      <td
+                        class="whitespace-nowrap border-b border-gray-200 py-4 pl-4 pr-3 text-sm font-medium sm:pl-6 lg:pl-8"
+                      >
+                        <button
+                          (click)="openDeleteDialog(transaction)"
+                          class="text-red-600 hover:text-red-800"
+                        >
+                          Delete
+                        </button>
                       </td>
                     </tr>
                   }
@@ -271,6 +286,14 @@
   <app-add-transaction-dialog
     (createTransactionEvent)="loadTransactions()"
     (closeDialog)="isDialogOpen = false"
+  />
+}
+
+@if (isDeleteDialogOpen && selectedTransaction) {
+  <app-delete-transaction-dialog
+    [transaction]="selectedTransaction"
+    (confirmDelete)="deleteTransaction()"
+    (closeDialog)="isDeleteDialogOpen = false"
   />
 }
 

@@ -29,6 +29,8 @@ import {
   ApexTooltip,
 } from 'ng-apexcharts'
 
+import { DeleteTransactionDialogComponent } from './delete-transaction-dialog.component'
+
 export type ChartOptions = {
   series: ApexAxisChartSeries
   chart: ApexChart
@@ -52,6 +54,7 @@ export type ChartOptions = {
     AddTransactionDialogComponent,
     ReactiveFormsModule,
     NgApexchartsModule,
+    DeleteTransactionDialogComponent,
   ],
   templateUrl: './app.component.html',
 })
@@ -131,6 +134,9 @@ export class AppComponent {
 
   // Add this property to track previous transactions
   private previousTransactions: string = ''
+
+  selectedTransaction: Transaction | null = null
+  isDeleteDialogOpen = false
 
   constructor(private transactionsRepository: TransactionsRepositoryService) {}
 
@@ -265,5 +271,22 @@ export class AppComponent {
     if (tableContainer) {
       tableContainer.scrollTop = 0
     }
+  }
+
+  openDeleteDialog(transaction: Transaction) {
+    this.selectedTransaction = transaction
+    this.isDeleteDialogOpen = true
+  }
+
+  async deleteTransaction() {
+    if (!this.selectedTransaction) return
+
+    this.transactionsRepository
+      .deleteTransaction(this.selectedTransaction.id.toString())
+      .subscribe(() => {
+        this.isDeleteDialogOpen = false
+        this.selectedTransaction = null
+        this.loadTransactions()
+      })
   }
 }

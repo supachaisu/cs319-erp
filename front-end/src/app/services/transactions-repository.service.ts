@@ -43,4 +43,8 @@ export class TransactionsRepositoryService {
     const response = await fetch('/api/categories')
     return response.json()
   }
+
+  deleteTransaction(id: string): Observable<void> {
+    return this.http.delete<void>(`/api/transaction/${id}`)
+  }
 }
