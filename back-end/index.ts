@@ -53,7 +53,7 @@ const validateTransactionStatus = (
 };
 
 app.post(`/api/transaction`, async (req, res) => {
-  const { description, amount, type, category } = req.body;
+  const { description, amount, type, category, status } = req.body;
 
   if (!description || !amount || !type || !category) {
     res.status(400).json({ error: "Missing required fields" });
@@ -69,6 +69,7 @@ app.post(`/api/transaction`, async (req, res) => {
         amount,
         type,
         category,
+        status,
       },
     });
     res.json(result);
@@ -85,11 +86,13 @@ app.get("/api/transactions", async (req, res) => {
     take,
     orderBy = "date",
     orderDirection = "desc",
+    status,
   } = req.query;
 
   const where: Prisma.TransactionWhereInput = {
     ...(type && { type: type as string }),
     ...(category && { category: category as string }),
+    ...(status && { status: status as string }),
   };
 
   try {
@@ -175,10 +178,10 @@ app.get("/api/categories", async (req, res) => {
       select: {
         category: true,
       },
-      distinct: ['category'],
+      distinct: ["category"],
     });
-    
-    res.json(categories.map(c => c.category));
+
+    res.json(categories.map((c) => c.category));
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });
   }

@@ -20,6 +20,7 @@ export interface CreateTransactionDto {
   amount: number;
   type: TransactionType;
   category: string;
+  status: TransactionStatus; 
 }
 
 // UpdateTransactionDto makes all fields optional + allows status update

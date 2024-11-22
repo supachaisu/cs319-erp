@@ -14,7 +14,7 @@ model Transaction {
   amount      Int // Whole Baht (100 = 100 THB)
   type        String // "INCOME" or "EXPENSE"
   category    String // Food, Travel, Salary etc.
-  status      String   @default("PENDING") // "PENDING" | "COMPLETED" | "CANCELLED"
+  status      String   @default("COMPLETED") // "PENDING" | "COMPLETED" | "CANCELLED"
   updatedAt   DateTime @updatedAt
 
   @@index([type])

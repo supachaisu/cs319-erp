@@ -25,6 +25,7 @@ export class TransactionsRepositoryService {
     take?: number,
     type?: string,
     category?: string,
+    status?: string,
   ): Observable<TransactionsResponse> {
     const params = new HttpParams()
       .set('skip', skip?.toString() ?? '')
@@ -33,6 +34,7 @@ export class TransactionsRepositoryService {
       .set('orderDirection', orderDirection)
       .set('type', type ?? '')
       .set('category', category ?? '')
+      .set('status', status ?? '')
 
     return this.http.get<TransactionsResponse>('/api/transactions', { params })
   }

@@ -1,7 +1,12 @@
 import { Component, EventEmitter, inject, Output } from '@angular/core'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { CommonModule } from '@angular/common'
-import { CreateTransactionDto, Transaction, TransactionType } from './models'
+import type {
+  CreateTransactionDto,
+  Transaction,
+  TransactionStatus,
+  TransactionType,
+} from './models'
 import { TransactionsRepositoryService } from './services'
 
 @Component({
@@ -23,7 +28,7 @@ export class AddTransactionDialogComponent {
     description: ['', [Validators.required]],
     category: ['', [Validators.required]],
     date: [new Date().toISOString().split('T')[0], [Validators.required]],
-    status: ['PENDING'],
+    status: ['COMPLETED', Validators.required],
   })
 
   onSubmit(): void {
@@ -33,6 +38,7 @@ export class AddTransactionDialogComponent {
         amount: Number(this.form.value.amount),
         description: this.form.value.description as string,
         category: this.form.value.category as string,
+        status: this.form.value.status as TransactionStatus,
       }
 
       this.transactionsRepository

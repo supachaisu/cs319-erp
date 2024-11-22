@@ -205,6 +205,7 @@ export class AppComponent {
         undefined,
         this.typeFilter.value || undefined,
         this.categoryFilter.value || undefined,
+        'COMPLETED',
       ),
     )
 

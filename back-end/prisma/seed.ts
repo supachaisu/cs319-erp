@@ -9,8 +9,7 @@ const transactionData: Prisma.TransactionCreateInput[] = [
     amount: 45000,
     type: "INCOME",
     category: "Tour Package",
-    date: new Date('2024-03-15'),
-    status: "COMPLETED"
+    date: new Date('2024-03-15')
   },
   {
     description: "Daily Office Expenses",
@@ -24,8 +23,7 @@ const transactionData: Prisma.TransactionCreateInput[] = [
     amount: 3500,
     type: "INCOME",
     category: "Commission",
-    date: new Date('2024-03-14'),
-    status: "PENDING"
+    date: new Date('2024-03-14')
   },
   {
     description: "Staff Transportation",
@@ -53,8 +51,7 @@ const transactionData: Prisma.TransactionCreateInput[] = [
     amount: 4500,
     type: "INCOME",
     category: "Service Fee",
-    date: new Date('2024-03-12'),
-    status: "CANCELLED"
+    date: new Date('2024-03-12')
   },
   {
     description: "Marketing Materials",
@@ -70,8 +67,7 @@ const transactionData: Prisma.TransactionCreateInput[] = [
     amount: 75000,
     type: "INCOME",
     category: "Tour Package",
-    date: new Date('2024-02-28'),
-    status: "COMPLETED"
+    date: new Date('2024-02-28')
   },
   {
     description: "Vehicle Maintenance",
