@@ -9,6 +9,7 @@ import type {
 } from '../models'
 import { TransactionsRepositoryService } from '../services'
 import { CategoryRepositoryService } from '../services'
+import { StatusRepositoryService } from '../services/status-repository.service'
 
 @Component({
   selector: 'app-add-transaction-dialog',
@@ -23,8 +24,10 @@ export class AddTransactionDialogComponent {
   private formBuilder = inject(FormBuilder)
   private transactionsRepository = inject(TransactionsRepositoryService)
   private categoryRepositoryService = inject(CategoryRepositoryService)
+  private statusRepositoryService = inject(StatusRepositoryService)
 
   categories$ = this.categoryRepositoryService.getCategories()
+  statuses$ = this.statusRepositoryService.getStatuses()
 
   form = this.formBuilder.group({
     type: ['EXPENSE', Validators.required],

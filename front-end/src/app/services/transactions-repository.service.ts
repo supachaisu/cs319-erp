@@ -6,6 +6,7 @@ import {
   UpdateTransactionDto,
 } from '../models'
 import { Observable } from 'rxjs'
+import { Status } from '../models'
 
 interface TransactionsResponse {
   transactions: Transaction[]
@@ -56,5 +57,9 @@ export class TransactionsRepositoryService {
       `/api/transaction/${transaction.id}`,
       transaction,
     )
+  }
+
+  getStatuses(): Observable<Status[]> {
+    return this.http.get<Status[]>('/api/statuses')
   }
 }

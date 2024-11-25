@@ -9,6 +9,7 @@ import type {
   UpdateTransactionDto,
 } from '../models'
 import { CategoryRepositoryService } from '../services'
+import { StatusRepositoryService } from '../services'
 
 @Component({
   selector: 'app-edit-transaction-dialog',
@@ -24,8 +25,10 @@ export class EditTransactionDialogComponent {
   private fb = inject(FormBuilder)
   private transactionService = inject(TransactionsRepositoryService)
   private categoryService = inject(CategoryRepositoryService)
+  private statusRepositoryService = inject(StatusRepositoryService)
 
   categories$ = this.categoryService.getCategories()
+  statuses$ = this.statusRepositoryService.getStatuses()
 
   form = this.fb.group({
     type: ['', Validators.required],
