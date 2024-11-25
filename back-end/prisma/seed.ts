@@ -57,6 +57,18 @@ const categoryData: Prisma.CategoryCreateInput[] = [
   },
 ];
 
+const statusData: Prisma.StatusCreateInput[] = [
+  {
+    name: "PENDING",
+  },
+  {
+    name: "COMPLETED",
+  },
+  {
+    name: "CANCELLED",
+  },
+];
+
 const transactionData: Prisma.TransactionCreateInput[] = [
   // March 2024
   {
@@ -298,6 +310,12 @@ async function main() {
   for (const c of categoryData) {
     const category = await prisma.category.create({ data: c });
     console.log(`Created category with id: ${category.id}`);
+  }
+
+  // Create statuses
+  for (const s of statusData) {
+    const status = await prisma.status.create({ data: s });
+    console.log(`Created status with id: ${status.id}`);
   }
 
   // Create transactions with direct category lookup

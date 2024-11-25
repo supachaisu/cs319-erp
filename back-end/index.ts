@@ -12,11 +12,6 @@ app.use("/api/categories", categoryRouter);
 app.use("/api/statuses", statusRouter);
 
 const VALID_TRANSACTION_TYPES = ["INCOME", "EXPENSE"] as const;
-const VALID_TRANSACTION_STATUSES = [
-  "PENDING",
-  "COMPLETED",
-  "CANCELLED",
-] as const;
 
 const validateTransactionType = (
   type: unknown,
@@ -29,25 +24,6 @@ const validateTransactionType = (
   ) {
     res.status(400).json({
       error: `Invalid transaction type: ${type}. Must be one of: ${VALID_TRANSACTION_TYPES.join(
-        ", "
-      )}`,
-    });
-    return false;
-  }
-  return true;
-};
-
-const validateTransactionStatus = (
-  status: unknown,
-  res: express.Response
-): boolean => {
-  if (
-    !VALID_TRANSACTION_STATUSES.includes(
-      status as (typeof VALID_TRANSACTION_STATUSES)[number]
-    )
-  ) {
-    res.status(400).json({
-      error: `Invalid status: ${status}. Must be one of: ${VALID_TRANSACTION_STATUSES.join(
         ", "
       )}`,
     });
@@ -141,8 +117,6 @@ app.put("/api/transaction/:id", async (req, res) => {
   const { date, description, amount, type, category, status } = req.body;
 
   if (type && !validateTransactionType(type, res)) return;
-
-  if (status && !validateTransactionStatus(status, res)) return;
 
   try {
     const transaction = await prisma.transaction.update({
