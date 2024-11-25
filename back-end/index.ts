@@ -93,7 +93,7 @@ app.get("/api/transactions", async (req, res) => {
 
   const where: Prisma.TransactionWhereInput = {
     ...(type && { type: type as string }),
-    ...(category && { category: { name: category as string } }),
+    ...(category && { category: category as string }),
     ...(status && { status: status as string }),
   };
 

@@ -1,0 +1,91 @@
+<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+  <div class="sm:flex sm:items-center">
+    <div class="sm:flex-auto">
+      <h1 class="text-lg font-bold text-gray-900 sm:text-xl">Categories</h1>
+      <p class="mt-2 text-sm text-gray-700">
+        Manage your income and expense categories
+      </p>
+    </div>
+    <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <button
+        type="button"
+        (click)="isAddDialogOpen = true"
+        class="block rounded-md bg-zinc-900 px-3 py-2 text-center text-sm font-semibold text-white hover:bg-zinc-800"
+      >
+        Add Category
+      </button>
+    </div>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead>
+            <tr>
+              <th
+                class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900"
+              >
+                Name
+              </th>
+              <th
+                class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+              >
+                Type
+              </th>
+              <th class="relative py-3.5 pl-3 pr-4 sm:pr-0">
+                <span class="sr-only">Actions</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            @for (category of categories(); track category.id) {
+              <tr>
+                <td
+                  class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900"
+                >
+                  {{ category.name }}
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  {{ category.type }}
+                </td>
+                <td
+                  class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+                >
+                  <button
+                    (click)="editCategory(category)"
+                    class="mr-4 text-zinc-600 hover:text-zinc-900"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    (click)="deleteCategory(category)"
+                    class="text-red-600 hover:text-red-900"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (isEditDialogOpen && selectedCategory) {
+  <app-edit-category-dialog
+    [category]="selectedCategory"
+    (updateCategoryEvent)="loadCategories()"
+    (closeDialog)="isEditDialogOpen = false"
+  />
+}
+
+@if (isDeleteDialogOpen && selectedCategory) {
+  <app-delete-category-dialog
+    [category]="selectedCategory"
+    (confirmDelete)="confirmDeleteCategory()"
+    (closeDialog)="isDeleteDialogOpen = false"
+  />
+}

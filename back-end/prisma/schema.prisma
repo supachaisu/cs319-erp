@@ -13,8 +13,7 @@ model Transaction {
   description String
   amount      Int // Whole Baht (100 = 100 THB)
   type        String // "INCOME" or "EXPENSE"
-  category    Category @relation(fields: [categoryId], references: [id])
-  categoryId  Int
+  category    String
   status      String   @default("COMPLETED") // "PENDING" | "COMPLETED" | "CANCELLED"
   updatedAt   DateTime @updatedAt
 
@@ -26,5 +25,4 @@ model Category {
   id          Int      @id @default(autoincrement())
   name        String @unique
   type        String // "INCOME" or "EXPENSE"
-  transactions Transaction[]
 }
