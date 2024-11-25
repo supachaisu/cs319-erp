@@ -2,7 +2,7 @@
   class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
   (click)="closeDialog.emit()"
 >
-  <div 
+  <div
     class="w-full max-w-md rounded-lg bg-white p-6"
     (click)="$event.stopPropagation()"
   >
@@ -50,20 +50,24 @@
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700"
-          >Category</label
-        >
-        <input
-          type="text"
+        <label class="block text-sm font-medium text-gray-700">Category</label>
+        <select
           formControlName="category"
           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500"
-        />
+        >
+          @for (category of categories$ | async; track category.id) {
+            <option
+              [ngValue]="category.name"
+              [selected]="category.name === transaction.category"
+            >
+              {{ category.name }}
+            </option>
+          }
+        </select>
       </div>
 
       <div>
-        <label class="block text-sm font-medium text-gray-700"
-          >Status</label
-        >
+        <label class="block text-sm font-medium text-gray-700">Status</label>
         <select
           formControlName="status"
           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-zinc-500 focus:ring-zinc-500"
