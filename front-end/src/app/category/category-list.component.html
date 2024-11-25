@@ -89,3 +89,10 @@
     (closeDialog)="isDeleteDialogOpen = false"
   />
 }
+
+@if (isAddDialogOpen) {
+  <app-add-category-dialog
+    (addCategoryEvent)="createCategory($event)"
+    (closeDialog)="isAddDialogOpen = false"
+  />
+}

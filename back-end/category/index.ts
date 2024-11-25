@@ -7,7 +7,11 @@ const prisma = new PrismaClient();
 // Get all categories
 router.get("/", async (req, res) => {
   try {
-    const categories = await prisma.category.findMany();
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        updatedAt: 'desc'
+      }
+    });
     res.json(categories);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch categories" });

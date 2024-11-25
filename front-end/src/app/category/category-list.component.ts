@@ -4,6 +4,7 @@ import { Category } from '../models/category.model'
 import { CommonModule } from '@angular/common'
 import { EditCategoryDialogComponent } from './edit-category-dialog.component'
 import { DeleteCategoryDialogComponent } from './delete-category-dialog.component'
+import { AddCategoryDialogComponent } from './add-category-dialog.component'
 
 @Component({
   selector: 'app-category-list',
@@ -12,6 +13,7 @@ import { DeleteCategoryDialogComponent } from './delete-category-dialog.componen
     CommonModule,
     EditCategoryDialogComponent,
     DeleteCategoryDialogComponent,
+    AddCategoryDialogComponent,
   ],
   templateUrl: './category-list.component.html',
 })
@@ -53,5 +55,12 @@ export class CategoryListComponent {
           this.loadCategories()
         })
     }
+  }
+
+  createCategory(category: any) {
+    this.categoryRepository.createCategory(category).subscribe(() => {
+      this.isAddDialogOpen = false
+      this.loadCategories()
+    })
   }
 }
