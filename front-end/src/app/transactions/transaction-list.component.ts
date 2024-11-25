@@ -9,7 +9,10 @@ import {
   tap,
   debounceTime,
 } from 'rxjs'
-import { TransactionsRepositoryService } from '../services'
+import {
+  CategoryRepositoryService,
+  TransactionsRepositoryService,
+} from '../services'
 import { AddTransactionDialogComponent } from './add-transaction-dialog.component'
 import { EditTransactionDialogComponent } from './edit-transaction-dialog.component'
 import { FormControl } from '@angular/forms'
@@ -139,7 +142,10 @@ export class TransactionListComponent {
   isDeleteDialogOpen = false
   isEditDialogOpen = false
 
-  constructor(private transactionsRepository: TransactionsRepositoryService) {}
+  constructor(
+    private transactionsRepository: TransactionsRepositoryService,
+    private categoryRepository: CategoryRepositoryService,
+  ) {}
 
   ngOnInit(): void {
     // Set up filter subscriptions
@@ -164,8 +170,10 @@ export class TransactionListComponent {
   }
 
   async loadCategories() {
-    const categories = await this.transactionsRepository.getCategories()
-    this.categories.set(categories)
+    const categories = await firstValueFrom(
+      this.categoryRepository.getCategories(),
+    )
+    this.categories.set(categories.map((category) => category.name))
   }
 
   async loadTransactions(): Promise<void> {
