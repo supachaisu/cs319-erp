@@ -1,6 +1,7 @@
 import { Prisma, PrismaClient, Transaction } from "@prisma/client";
 import express from "express";
 import { router as categoryRouter } from "./category";
+import { router as statusRouter } from "./status";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -8,6 +9,7 @@ const app = express();
 app.use(express.json());
 app.use("/api", express.Router());
 app.use("/api/categories", categoryRouter);
+app.use("/api/statuses", statusRouter);
 
 const VALID_TRANSACTION_TYPES = ["INCOME", "EXPENSE"] as const;
 const VALID_TRANSACTION_STATUSES = [

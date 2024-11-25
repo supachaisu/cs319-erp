@@ -22,9 +22,16 @@ model Transaction {
 }
 
 model Category {
-  id          Int      @id @default(autoincrement())
-  name        String @unique
-  type        String // "INCOME" or "EXPENSE"
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  type      String // "INCOME" or "EXPENSE"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Status {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
