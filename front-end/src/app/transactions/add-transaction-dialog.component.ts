@@ -8,6 +8,7 @@ import type {
   TransactionType,
 } from '../models'
 import { TransactionsRepositoryService } from '../services'
+import { CategoryRepositoryService } from '../services'
 
 @Component({
   selector: 'app-add-transaction-dialog',
@@ -21,6 +22,9 @@ export class AddTransactionDialogComponent {
 
   private formBuilder = inject(FormBuilder)
   private transactionsRepository = inject(TransactionsRepositoryService)
+  private categoryRepositoryService = inject(CategoryRepositoryService)
+
+  categories$ = this.categoryRepositoryService.getCategories()
 
   form = this.formBuilder.group({
     type: ['EXPENSE', Validators.required],
