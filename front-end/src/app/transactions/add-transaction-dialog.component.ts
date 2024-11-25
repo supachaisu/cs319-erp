@@ -1,4 +1,10 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  inject,
+  Output,
+  computed,
+} from '@angular/core'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { CommonModule } from '@angular/common'
 import type {
@@ -10,6 +16,7 @@ import type {
 import { TransactionsRepositoryService } from '../services'
 import { CategoryRepositoryService } from '../services'
 import { StatusRepositoryService } from '../services/status-repository.service'
+import { toSignal } from '@angular/core/rxjs-interop'
 
 @Component({
   selector: 'app-add-transaction-dialog',
@@ -26,8 +33,21 @@ export class AddTransactionDialogComponent {
   private categoryRepositoryService = inject(CategoryRepositoryService)
   private statusRepositoryService = inject(StatusRepositoryService)
 
-  categories$ = this.categoryRepositoryService.getCategories()
+  private categories = toSignal(
+    this.categoryRepositoryService.getCategories(),
+    { initialValue: [] },
+  )
+
   statuses$ = this.statusRepositoryService.getStatuses()
+
+  filteredCategories = computed(() => {
+    const type = this.form.get('type')?.value
+    return this.categories().filter((category) =>
+      type === 'EXPENSE'
+        ? category.type === 'EXPENSE'
+        : category.type === 'INCOME',
+    )
+  })
 
   form = this.formBuilder.group({
     type: ['EXPENSE', Validators.required],
@@ -37,6 +57,20 @@ export class AddTransactionDialogComponent {
     date: [new Date().toISOString().split('T')[0], [Validators.required]],
     status: ['COMPLETED', Validators.required],
   })
+
+  constructor() {
+    this.form.get('type')?.valueChanges.subscribe(() => {
+      this.form.patchValue({ category: '' })
+      this.filteredCategories = computed(() => {
+        const type = this.form.get('type')?.value
+        return this.categories().filter((category) =>
+          type === 'EXPENSE'
+            ? category.type === 'EXPENSE'
+            : category.type === 'INCOME',
+        )
+      })
+    })
+  }
 
   onSubmit(): void {
     if (this.form.valid) {

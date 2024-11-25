@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  computed,
+  inject,
+} from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
 import { TransactionsRepositoryService } from '../services'
@@ -10,6 +17,7 @@ import type {
 } from '../models'
 import { CategoryRepositoryService } from '../services'
 import { StatusRepositoryService } from '../services'
+import { toSignal } from '@angular/core/rxjs-interop'
 
 @Component({
   selector: 'app-edit-transaction-dialog',
@@ -24,10 +32,23 @@ export class EditTransactionDialogComponent {
 
   private fb = inject(FormBuilder)
   private transactionService = inject(TransactionsRepositoryService)
-  private categoryService = inject(CategoryRepositoryService)
+  private categoryRepositoryService = inject(CategoryRepositoryService)
   private statusRepositoryService = inject(StatusRepositoryService)
 
-  categories$ = this.categoryService.getCategories()
+  private categories = toSignal(
+    this.categoryRepositoryService.getCategories(),
+    { initialValue: [] },
+  )
+
+  filteredCategories = computed(() => {
+    const type = this.form.get('type')?.value
+    return this.categories().filter((category) =>
+      type === 'EXPENSE'
+        ? category.type === 'EXPENSE'
+        : category.type === 'INCOME',
+    )
+  })
+
   statuses$ = this.statusRepositoryService.getStatuses()
 
   form = this.fb.group({
@@ -47,6 +68,20 @@ export class EditTransactionDialogComponent {
       category: this.transaction.category,
       status: this.transaction.status,
       date: new Date(this.transaction.date).toISOString().split('T')[0],
+    })
+
+    this.form.get('type')?.valueChanges.subscribe(() => {
+      this.filteredCategories = computed(() => {
+        const type = this.form.get('type')?.value
+        return this.categories().filter((category) =>
+          type === 'EXPENSE'
+            ? category.type === 'EXPENSE'
+            : category.type === 'INCOME',
+        )
+      })
+      this.form.patchValue({
+        category: this.filteredCategories()[0].name,
+      })
     })
   }
 
