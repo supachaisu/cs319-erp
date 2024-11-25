@@ -20,3 +20,9 @@ model Transaction {
   @@index([type])
   @@index([status])
 }
+
+model Category {
+  id          Int      @id @default(autoincrement())
+  name        String
+  type        String // "INCOME" or "EXPENSE"
+}

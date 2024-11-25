@@ -1,11 +1,13 @@
 import { Prisma, PrismaClient, Transaction } from "@prisma/client";
 import express from "express";
+import { router as categoryRouter } from "./category";
 
 const prisma = new PrismaClient();
 const app = express();
 
 app.use(express.json());
 app.use("/api", express.Router());
+app.use("/api/categories", categoryRouter);
 
 const VALID_TRANSACTION_TYPES = ["INCOME", "EXPENSE"] as const;
 const VALID_TRANSACTION_STATUSES = [
@@ -169,21 +171,6 @@ app.delete("/api/transaction/:id", async (req, res) => {
     res.json({ message: "Transaction deleted successfully" });
   } catch (error) {
     res.status(400).json({ error: `Transaction with ID ${id} does not exist` });
-  }
-});
-
-app.get("/api/categories", async (req, res) => {
-  try {
-    const categories = await prisma.transaction.findMany({
-      select: {
-        category: true,
-      },
-      distinct: ["category"],
-    });
-
-    res.json(categories.map((c) => c.category));
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch categories" });
   }
 });
 
