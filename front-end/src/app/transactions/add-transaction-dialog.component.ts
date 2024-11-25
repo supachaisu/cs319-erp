@@ -6,8 +6,8 @@ import type {
   Transaction,
   TransactionStatus,
   TransactionType,
-} from './models'
-import { TransactionsRepositoryService } from './services'
+} from '../models'
+import { TransactionsRepositoryService } from '../services'
 
 @Component({
   selector: 'app-add-transaction-dialog',

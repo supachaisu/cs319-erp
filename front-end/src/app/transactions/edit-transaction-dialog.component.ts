@@ -1,13 +1,13 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms'
-import { TransactionsRepositoryService } from './services'
+import { TransactionsRepositoryService } from '../services'
 import type {
   Transaction,
   TransactionStatus,
   TransactionType,
   UpdateTransactionDto,
-} from './models'
+} from '../models'
 
 @Component({
   selector: 'app-edit-transaction-dialog',
